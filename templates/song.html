@@ -4,16 +4,32 @@
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
     <title>{{ song.name }}</title>
     <style>
-
     </style>
+   <script>
+    function loadColors() {
+        var body = document.body;
+        var bodyBackgroundColor = localStorage.getItem('bodyBackgroundColor');
+        if (bodyBackgroundColor) {body.style.backgroundColor = bodyBackgroundColor;}}
+    window.onload = loadColors;
+    </script> 
 </head>
 <body>
     <h1>{{ song.name }}</h1>
     <small>
-        <p>Genres: {{ song.genres|map(attribute='name')|join(', ') }}</p>
-        <p>Authors: {{ song.authors|map(attribute='name')|join(', ') }}</p>
+        {% if song.genres|length > 0 and song.genres[0].name != "" %}
+            <p>{% if song.genres|length > 1 %}
+                    Žanrid: {{ song.genres|map(attribute='name')|join(', ') }}
+                {% else %}
+                    Žanr: {{ song.genres[0].name }}{% endif %}</p>        
+        {% endif %}
+        {% if song.authors|length > 0 and song.authors[0].name != "" %}
+            <p>{% if song.authors|length > 1 %}
+                    Autorid: {{ song.authors|map(attribute='name')|join(', ') }}
+                {% else %}
+                    Autor: {{ song.authors[0].name }}{% endif %}</p>
+        {% endif %}
     </small>
     <pre>{{ song.lyrics|replace('\n+', '<br>')|safe }}</pre>  <!-- Added replace and safe filters -->
-    <button onclick="window.location.href='/songbook';" style="font-size:20px; padding:10px;">Back to Search</button>
+    <a href="/songbook" style="font-size: 2.5vw; padding: 10px; background-color: transparent !important; text-decoration: none;">↩️</a>
 </body>
 </html>

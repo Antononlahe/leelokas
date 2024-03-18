@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <title>Admin Page</title>
+</head>
+<body>
+    <h1>Add a Song</h1>
+    <form action="/songbook/add" method="post">
+        <input type="hidden" id="song_id" name="song_id">
+        <label for="name">Song Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="lyrics">Lyrics:</label><br>
+        <textarea id="lyrics" name="lyrics"></textarea><br>
+        <label for="genre">Genres (comma separated):</label><br>
+        <input type="text" id="genre" name="genre"><br>
+        <label for="author">Authors (comma separated):</label><br>
+        <input type="text" id="author" name="author"><br>
+        <input type="submit" value="Add Song">
+    </form>
+    <h1>Delete a Song</h1>
+    <ul>
+        {% for song in songs %}
+        <li>
+            <a href="#" onclick="loadSong('{{ song.id }}'); return false;">{{ song.name }}</a>
+            <button style="font-size: 1vw;" onclick="deleteSong('{{ song.id }}')">❌</button>
+        </li>
+        {% endfor %}
+    </ul>
+    <script>
+    function deleteSong(songId) {
+        fetch('/songbook/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'song_id=' + songId + '&password=' + password,
+        })
+        .then(response => response.text())
+        .then(data => alert(data));
+    }
+    function loadSong(songId) {
+    fetch('/songbook/song/' + songId)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('song_id').value = songId;
+        document.getElementById('name').value = data.name;
+        document.getElementById('lyrics').value = data.lyrics;
+        document.getElementById('genre').value = data.genre;
+        document.getElementById('author').value = data.author;
+    });}
+    </script>
+</body>
+</html>

@@ -53,7 +53,28 @@ button {
     border: none;
     padding: 0.5em 1em;
     margin: 0.5em;
-    font-size: 1em;
+    font-size: 2vw;
     cursor: pointer;
     border-radius: 0.5em;
+    user-select: none;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+input[type="text"] {
+    width: 100%; /* Increase as needed */
+    padding: 0.5em;
+    background-color: #C0C0C0;
+}
+
+textarea#lyrics {
+    width: 100%; /* Increase as needed */
+    height: 200px; /* Increase as needed */
+    padding: 0.5em;
+    background-color: #C0C0C0;
 }
