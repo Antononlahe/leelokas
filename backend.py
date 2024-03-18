@@ -5,6 +5,7 @@ from .database import db
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
+    app.debug = True
 
     db.init_app(app)
 
@@ -15,5 +16,3 @@ def create_app():
         db.create_all()
 
     return app
-
-#app = create_app()
