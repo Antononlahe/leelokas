@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            var availableSongs = {{ song_names|tojson|safe }};
+            $( "#search" ).autocomplete({
+                source: availableSongs
+            });
+        } );
+        function swapColors() {
+            var body = document.body;
+            var buttons = document.getElementsByTagName('button');
+            var currentBodyBackgroundColor = getComputedStyle(body).backgroundColor;
+            var currentButtonBackgroundColor = getComputedStyle(buttons[0]).backgroundColor;
+            
+            body.style.backgroundColor = currentButtonBackgroundColor;
+
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].style.backgroundColor = currentBodyBackgroundColor;
+            }
+        }
+        </script>
+    <title>Songbook</title>
+</head>
+<body>
+    <div class="container">
+        <form action="/songbook" method="get">
+            <input type="text" id="search" name="query" placeholder="Search for a song">
+            <button type="submit" value="Search">🔍</button>
+            <button type="submit" name="sort" value="alphabet">🔤</button>
+            <button type="submit" name="sort" value="lyrics">🎤</button>
+        </form>
+        <ul>
+            {% for song in songs %}
+            <li>
+                <a href="{{ url_for('songbook.song_detail', song_name=song.name) }}">{{ song.name }}</a>
+                - "{{ song.first_three_words }}..."
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <button id="swapColorsButton" onclick="swapColors()">🌈</button>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <title>{{ song.name }}</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <h1>{{ song.name }}</h1>
+    <small>
+        <p>Genres: {{ song.genres|map(attribute='name')|join(', ') }}</p>
+        <p>Authors: {{ song.authors|map(attribute='name')|join(', ') }}</p>
+    </small>
+    <pre>{{ song.lyrics|replace('\n+', '<br>')|safe }}</pre>  <!-- Added replace and safe filters -->
+    <button onclick="window.location.href='/songbook';" style="font-size:20px; padding:10px;">Back to Search</button>
+</body>
+</html>

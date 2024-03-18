@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add a Song</title>
+</head>
+<body>
+    <form action="/songbook/add" method="post">
+        <label for="name">Song Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="lyrics">Lyrics:</label><br>
+        <textarea id="lyrics" name="lyrics"></textarea><br>
+        <label for="genre">Genres (comma separated):</label><br>
+        <input type="text" id="genre" name="genre"><br>
+        <label for="author">Authors (comma separated):</label><br>
+        <input type="text" id="author" name="author"><br>
+        <input type="submit" value="Add Song">
+    </form>
+</body>
+</html>
