@@ -16,13 +16,12 @@ def create_blueprint():
                 return redirect(url_for('songbook.show_song', song_name=song.name))
             songs = Song.query.filter(Song.name.contains(query) | Song.lyrics.contains(query)).all()
         if sort == 'alphabet':
-            songs.sort(key=lambda song: song.name)
+            songs.sort(key=lambda song: song.name.lower())
         elif sort == 'lyrics':
-            songs.sort(key=lambda song: song.lyrics.split(' ')[0])
+            songs.sort(key=lambda song: song.lyrics.split(' ')[0].lower())
         song_names = [song.name for song in songs]
-
         for song in songs:
-            song.first_three_words = ' '.join(song.lyrics.split(' ')[:3])
+            song.first_three_words = ' '.join(song.lyrics.replace('Refr.', '').split(' ')[:3])
         return render_template('index.html', songs=songs, song_names=song_names)   
 
     @bp.route('/songbook/add', methods=['POST'])
@@ -102,18 +101,14 @@ def create_blueprint():
     @bp.route('/songbook/delete', methods=['GET', 'POST'])
     def delete_song():
         if request.method == 'POST':
-            password = request.form.get('password')
             song_id = request.form.get('song_id')
-            if password == 'pw1':
-                song = Song.query.get(song_id)
-                if song:
-                    db.session.delete(song)
-                    db.session.commit()
-                    return "Laul kustutatud", 200
-                else:
-                    return "Song not found", 404
+            song = Song.query.get(song_id)
+            if song:
+                db.session.delete(song)
+                db.session.commit()
+                return "Song deleted", 200
             else:
-                return "Invalid password", 403
+                return "Song not found", 404
         else:
             songs = Song.query.all()
             return render_template('delete.html', songs=songs)
