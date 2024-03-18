@@ -4,8 +4,6 @@
 # Ignore the __pycache__ directory
 __pycache__/
 
-# Ignore the instance directory
-instance/
+.venv/
 
-# Ignore all .html files in the templates directory
-templates/*.html
+instance/
