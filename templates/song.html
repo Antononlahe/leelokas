@@ -4,13 +4,6 @@
     <link rel="stylesheet" type="text/css" href="/static/pico.violet.css">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>{{ song.name }}</title>
-   <script>
-    function loadColors() {
-        var body = document.body;
-        var bodyBackgroundColor = localStorage.getItem('bodyBackgroundColor');
-        if (bodyBackgroundColor) {body.style.backgroundColor = bodyBackgroundColor;}}
-    window.onload = loadColors;
-    </script> 
     <style>
         .container {
             text-align: center !important;
@@ -18,24 +11,32 @@
     </style>
 </head>
 <body>
+    <nav class="container">
+        <ul>
+            <li><strong>Korp! Vironia laulik</strong></li>
+            <img src="/static/vironia_vapp.png" alt="Vironia vapp" style="width: 2rem;">
+        </ul>
+        <ul>
+            <li><a href="/songbook" class="">Pealeht</a></li>
+        </ul>
+    </nav>
     <main class="container overflow-auto ">
-        <div class="container">
-            <h1>{{ song.name }}</h1>
-            {% if song.genres|length > 0 and song.genres[0].name != "" %}
-                <p>{% if song.genres|length > 1 %}
-                        Žanrid: {{ song.genres|map(attribute='name')|join(', ') }}
-                    {% else %}
-                        Žanr: {{ song.genres[0].name }}{% endif %}</p>        
-            {% endif %}
+            <h1 style="color:#d3d3d3">{{ song.name }}</h1>
             {% if song.authors|length > 0 and song.authors[0].name != "" %}
-                <p>{% if song.authors|length > 1 %}
+                <div style="opacity: 0.7;">{% if song.authors|length > 1 %}
                         Autorid: {{ song.authors|map(attribute='name')|join(', ') }}
                     {% else %}
-                        Autor: {{ song.authors[0].name }}{% endif %}</p>
+                        Autor: {{ song.authors[0].name }}{% endif %}</div>
             {% endif %}
-            <p>{{ song.lyrics|replace('\n', '<br>')|safe }}</p>  <!-- Added replace and safe filters -->
+            {% if song.genres|length > 0 and song.genres[0].name != "" %}
+                <div style="opacity: 0.7;">{% if song.genres|length > 1 %}
+                        Žanrid: {{ song.genres|map(attribute='name')|join(', ') }}
+                    {% else %}
+                        Žanr: {{ song.genres[0].name }}{% endif %}</div>        
+            {% endif %}
+            <hr/>
+            <p style="color:#C0C0C0">{{ song.lyrics|replace('\n', '<br>')|safe }}</p>  <!-- Added replace and safe filters -->
             <a href="/songbook" style="font-size: 3vw; padding: 10px; background-color: transparent !important; text-decoration: none;">↩️</a>
-        </div>
     </main>
 </body>
 </html>

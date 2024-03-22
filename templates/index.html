@@ -6,7 +6,6 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script class="/static/main.js"></script>
     <script>
         $( function() {
             var availableSongs = {{ song_names|tojson|safe }};
@@ -18,16 +17,24 @@
     <title>Songbook</title>
 </head>
 <body>
+    <nav class="container">
+        <ul>
+            <li><strong>Korp! Vironia laulik</strong></li>
+            <img src="/static/vironia_vapp.png" alt="Vironia vapp" style="width: 2rem;">
+        </ul>
+    </nav>
     <main class="container overflow-auto">
-        <form role="search" action="/songbook" method="get">
-            <input type="search" id="search" name="query" placeholder="Otsi laulu">
-            <button type="submit" value="Search">🔍</button>
-        </form>
-            <div role="group"> 
-                <button type="submit" name="sort" value="alphabet">🔤</button>
-                <button class="secondary" type="submit" name="sort" value="lyrics">🎤</button>
-                <button class="contrast" type="submit" id="swapColorsButton" onclick="swapColors()" >🌈</button>
-            </div>
+        <form style="align-items: center;" role="group" action="/songbook" method="get">
+            <input type="search" id="search" name="query" placeholder="Otsi laulu" value="{{ request.args.get('query', '') }}">
+            
+            <button type="submit">
+                <img src="/static/search.png" alt="Sort" style="width: 2rem;">
+            </button>
+            <button data-placement="left" data-tooltip="Vaheta järjestust" class="secondary" type="submit" name="flip_sort" value="true">
+                <img src="/static/sort.png" alt="Sort" style="width: 2rem;">
+            </button>
+            <label style="padding-left: 1rem;" for="search_in_lyrics">Otsi ka sõnades</label>
+            <input style="height: 3rem; width: 3rem;"  type="checkbox" id="search_in_lyrics" name="search_in_lyrics" {{ 'checked' if request.args.get('search_in_lyrics', session.get('search_in_lyrics', False)) else '' }}>        </form>
         <ul>
             {% for song in songs %}
             <li>
@@ -38,7 +45,8 @@
         </ul>
 
         <blockquote>
-            „Laulab nagu Vironus tähendab laulab valjusti- ja valesti.“
+            <img src="/static/vironia_laulik.png" alt="Vironia vapp" style="width: 80px;">
+            „Laula nagu Vironus - valjusti ja valesti.“
             <footer>
               <cite>— b!vil! Magister Canister</cite>
             </footer>

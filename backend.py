@@ -5,7 +5,7 @@ from .database import db
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
-
+    app.secret_key = 'your_secret_key'
     db.init_app(app)
 
     songbook_bp = create_blueprint()

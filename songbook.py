@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, abort, redirect, url_for, make_response, jsonify
+from flask import Blueprint, request, render_template, session, redirect, url_for, make_response, jsonify
 from .database import db, Song, Author, Genre
 
 def create_blueprint():
@@ -7,14 +7,26 @@ def create_blueprint():
     @bp.route('/songbook', methods=['GET'])
     def index():
         query = request.args.get('query', '')
-        sort = request.args.get('sort', '')
+        search_in_lyrics = 'search_in_lyrics' in request.args
+        session['search_in_lyrics'] = search_in_lyrics
+        sort = session.get('sort', 'name')
+        if 'flip_sort' in request.args:
+            sort = 'lyrics' if sort == 'name' else 'name'
+            session['sort'] = sort
+            redirect_args = {'query': query}
+            if search_in_lyrics:
+                redirect_args['search_in_lyrics'] = 'on'
+            return redirect(url_for('songbook.index', **redirect_args))
         if query == '':
             songs = Song.query.all()
         else:
             song = Song.query.filter_by(name=query).first()
             if song is not None:
                 return redirect(url_for('songbook.show_song', song_name=song.name))
-            songs = Song.query.filter(Song.name.contains(query) | Song.lyrics.contains(query)).all()
+            if search_in_lyrics:
+                songs = Song.query.filter(Song.name.contains(query) | Song.lyrics.contains(query)).all()
+            else:
+                songs = Song.query.filter(Song.name.contains(query)).all()
         if sort == 'lyrics':
             songs.sort(key=lambda song: song.lyrics.split(' ')[0].lower())
         else:
@@ -22,7 +34,7 @@ def create_blueprint():
         song_names = [song.name for song in songs]
         for song in songs:
             song.first_three_words = ' '.join(song.lyrics.replace('Refr.', '').split(' ')[:3])
-        return render_template('index.html', songs=songs, song_names=song_names)   
+        return render_template('index.html', songs=songs, song_names=song_names)
 
     @bp.route('/songbook/add', methods=['POST'])
     def add_song():
@@ -38,28 +50,31 @@ def create_blueprint():
                 return "Song not found", 404
             song.name = name
             song.lyrics = lyrics
-            song.genres = []
+            song.genres.clear()
+            song.authors.clear()
         else:
             song = Song(name=name, lyrics=lyrics)
             db.session.add(song)
 
         for genre_name in genre_names:
             genre_name = genre_name.strip()
-            genre = Genre.query.filter_by(name=genre_name).first()
-            if genre is None:
-                genre = Genre(name=genre_name)
-                db.session.add(genre)
-            if genre not in song.genres:
-                song.genres.append(genre)
+            if genre_name:
+                genre = Genre.query.filter_by(name=genre_name).first()
+                if genre is None:
+                    genre = Genre(name=genre_name)
+                    db.session.add(genre)
+                if genre not in song.genres:
+                    song.genres.append(genre)
 
         for author_name in author_names:
             author_name = author_name.strip()
-            author = Author.query.filter_by(name=author_name).first()
-            if author is None:
-                author = Author(name=author_name)
-                db.session.add(author)
-            if author not in song.authors:
-                song.authors.append(author)
+            if author_name:
+                author = Author.query.filter_by(name=author_name).first()
+                if author is None:
+                    author = Author(name=author_name)
+                    db.session.add(author)
+                if author not in song.authors:
+                    song.authors.append(author)
 
         db.session.add(song)
         db.session.commit()
