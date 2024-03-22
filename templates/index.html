@@ -2,11 +2,11 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="stylesheet" type="text/css" href="/static/pico.violet.css">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="/static/main.js"></script>
+    <script class="/static/main.js"></script>
     <script>
         $( function() {
             var availableSongs = {{ song_names|tojson|safe }};
@@ -18,18 +18,16 @@
     <title>Songbook</title>
 </head>
 <body>
-    <div class="container">
-        <form action="/songbook" method="get">
-            <div class="row">
-                <input type="text" id="search" name="query" placeholder="Otsi laulu">
-            </div>
-            <div class="row">
-                <button type="submit" value="Search">🔍</button>
-                <button type="submit" name="sort" value="alphabet">🔤</button>
-                <button type="submit" name="sort" value="lyrics">🎤</button>
-                <button id="swapColorsButton" onclick="swapColors()" style="user-select: none;">🌈</button>
-            </div>
+    <main class="container overflow-auto">
+        <form role="search" action="/songbook" method="get">
+            <input type="search" id="search" name="query" placeholder="Otsi laulu">
+            <button type="submit" value="Search">🔍</button>
         </form>
+            <div role="group"> 
+                <button type="submit" name="sort" value="alphabet">🔤</button>
+                <button class="secondary" type="submit" name="sort" value="lyrics">🎤</button>
+                <button class="contrast" type="submit" id="swapColorsButton" onclick="swapColors()" >🌈</button>
+            </div>
         <ul>
             {% for song in songs %}
             <li>
@@ -38,6 +36,13 @@
             </li>
             {% endfor %}
         </ul>
-    </div>
+
+        <blockquote>
+            „Laulab nagu Vironus tähendab laulab valjusti- ja valesti.“
+            <footer>
+              <cite>— b!vil! Magister Canister</cite>
+            </footer>
+          </blockquote>
+    </main>
 </body>
 </html>

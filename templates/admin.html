@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="stylesheet" type="text/css" href="/static/pico.violet.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>Admin Page</title>
 </head>
-<body>
+<body class="container overflow-auto">
     <h1>Add a Song</h1>
     <form action="/songbook/add" method="post">
         <input type="hidden" id="song_id" name="song_id">
-        <label for="name">Song Name:</label><br>
-        <input type="text" id="name" name="name"><br>
-        <label for="lyrics">Lyrics:</label><br>
-        <textarea id="lyrics" name="lyrics"></textarea><br>
-        <label for="genre">Genres (comma separated):</label><br>
-        <input type="text" id="genre" name="genre"><br>
-        <label for="author">Authors (comma separated):</label><br>
-        <input type="text" id="author" name="author"><br>
-        <input type="submit" value="Add Song">
+        <input type="text" id="name" name="name" placeholder="Pealkiri"><br>
+        <textarea id="lyrics" name="lyrics" placeholder="Sõnad"></textarea><br>
+        <input type="text" id="genre" name="genre" placeholder="Žanrid (komaga eraldatud)"><br>
+        <input type="text" id="author" name="author" placeholder="Autorid (komaga eraldatud)"><br>
+        <input type="submit" value="LISA LAUL">
     </form>
-    <h1>Delete a Song</h1>
+    <h1>KUSTUTA LAUL</h1>
     <ul>
         {% for song in songs %}
         <li>

@@ -15,10 +15,10 @@ def create_blueprint():
             if song is not None:
                 return redirect(url_for('songbook.show_song', song_name=song.name))
             songs = Song.query.filter(Song.name.contains(query) | Song.lyrics.contains(query)).all()
-        if sort == 'alphabet':
-            songs.sort(key=lambda song: song.name.lower())
-        elif sort == 'lyrics':
+        if sort == 'lyrics':
             songs.sort(key=lambda song: song.lyrics.split(' ')[0].lower())
+        else:
+            songs.sort(key=lambda song: song.name.lower())
         song_names = [song.name for song in songs]
         for song in songs:
             song.first_three_words = ' '.join(song.lyrics.replace('Refr.', '').split(' ')[:3])
@@ -38,6 +38,7 @@ def create_blueprint():
                 return "Song not found", 404
             song.name = name
             song.lyrics = lyrics
+            song.genres = []
         else:
             song = Song(name=name, lyrics=lyrics)
             db.session.add(song)
