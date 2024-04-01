@@ -31,10 +31,8 @@ def create_blueprint():
             songs.sort(key=lambda song: song.lyrics.split(' ')[0].lower())
         else:
             songs.sort(key=lambda song: song.name.lower())
-        song_names = [song.name for song in songs]
-        for song in songs:
-            song.first_three_words = ' '.join(song.lyrics.replace('Refr.', '').split(' ')[:3])
-        return render_template('index.html', songs=songs, song_names=song_names)
+        songs_dict = [song.to_dict() for song in songs]
+        return render_template('index.html', songs=songs_dict)
 
     @bp.route('/songbook/add', methods=['POST'])
     def add_song():

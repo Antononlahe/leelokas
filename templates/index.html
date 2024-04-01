@@ -7,25 +7,53 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
-        $( function() {
-            var availableSongs = {{ song_names|tojson|safe }};
-            $( "#search" ).autocomplete({
-                source: availableSongs
-            });
-        } );
+        $(function() {
+    var songs = {{ songs|tojson|safe }}; 
+
+    // Make sure you initially render the list of songs in your HTML
+    const songList = $('#song-list'); 
+    renderSongList(songs); 
+
+    $('#search_in_lyrics').on('change', function() {
+        $("#search").trigger('input');
+    });
+
+    $("#search").on('input', function() {
+        const query = $(this).val().toLowerCase();
+        const searchInLyrics = $('#search_in_lyrics').is(':checked');
+        const filteredSongs = songs.filter(song => {
+            const nameIncludesQuery = song.name.toLowerCase().includes(query);
+            const lyricsIncludesQuery = song.lyrics.toLowerCase().includes(query);
+            return searchInLyrics ? (nameIncludesQuery || lyricsIncludesQuery) : nameIncludesQuery;
+        });
+        renderSongList(filteredSongs);
+    });
+
+    function renderSongList(songs) {
+        songList.empty(); 
+        songs.forEach(function(song) {
+            var songName = song.name.replace(/&quot;/g, '\"');
+            var songName = encodeURIComponent(song.name);
+            songList.append(`<h4><li><a href="/songbook/${songName}">${song.name}</a>
+                - "${song.first_three_words}..."
+                </li></h4>`);
+        });
+    }
+});
+
     </script>
     <title>Songbook</title>
 </head>
 <body>
     <nav class="container">
         <ul>
-            <li><strong>Korp! Vironia laulik</strong></li>
-            <img src="/static/vironia_vapp.png" alt="Vironia vapp" style="width: 2rem;">
+            <a href="/songbook"><li><strong>Korp! Vironia laulik</strong></li></a>
+            <a href="/songbook"><img src="/static/vironia_vapp.png" alt="Vironia vapp" style="width: 2rem;"></a>
         </ul>
     </nav>
     <main class="container overflow-auto">
         <form style="align-items: center;" role="group" action="/songbook" method="get">
-            <input type="search" id="search" name="query" placeholder="Otsi laulu" value="{{ request.args.get('query', '') }}">
+            <input autocomplete="off" type="search" id="search" name="query" placeholder="Otsi laulu" value="{{ request.args.get('query', '') }}">
             
             <button type="submit">
                 <img src="/static/search.png" alt="Sort" style="width: 2rem;">
@@ -35,13 +63,7 @@
             </button>
             <label style="padding-left: 1rem;" for="search_in_lyrics">Otsi ka sõnades</label>
             <input style="height: 3rem; width: 3rem;"  type="checkbox" id="search_in_lyrics" name="search_in_lyrics" {{ 'checked' if request.args.get('search_in_lyrics', session.get('search_in_lyrics', False)) else '' }}>        </form>
-        <ul>
-            {% for song in songs %}
-            <li>
-                <a href="{{ url_for('songbook.show_song', song_name=song.name) }}">{{ song.name }}</a>
-                - "{{ song.first_three_words }}..."
-            </li>
-            {% endfor %}
+        <ul id="song-list">
         </ul>
 
         <blockquote>
@@ -52,5 +74,6 @@
             </footer>
           </blockquote>
     </main>
+    <footer class = "container">Lehe looja ja haldaja:<br> b!vil! Anton Žatkin<br> anton.zatkin@vironia.ee</footer>
 </body>
 </html>

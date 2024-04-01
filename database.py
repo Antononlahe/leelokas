@@ -20,6 +20,20 @@ class Song(db.Model):
         backref=db.backref('songs', lazy=True))
     genres = db.relationship('Genre', secondary=song_genres, lazy='subquery',
         backref=db.backref('songs', lazy=True))
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'lyrics': self.lyrics,
+            'first_three_words': self.first_three_words,
+            'authors': [author.name for author in self.authors],
+            'genres': [genre.name for genre in self.genres],
+        }
+
+    @property
+    def first_three_words(self):
+        return ' '.join(self.lyrics.replace('Refr.', '').split(' ')[:3])
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)

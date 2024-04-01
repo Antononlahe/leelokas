@@ -13,11 +13,8 @@
 <body>
     <nav class="container">
         <ul>
-            <li><strong>Korp! Vironia laulik</strong></li>
-            <img src="/static/vironia_vapp.png" alt="Vironia vapp" style="width: 2rem;">
-        </ul>
-        <ul>
-            <li><a href="/songbook" class="">Pealeht</a></li>
+            <a href="/songbook"><li><strong>Korp! Vironia laulik</strong></li></a>
+            <a href="/songbook"><img src="/static/vironia_vapp.png" alt="Vironia vapp" style="width: 2rem;"></a>
         </ul>
     </nav>
     <main class="container overflow-auto ">
@@ -35,7 +32,7 @@
                         Žanr: {{ song.genres[0].name }}{% endif %}</div>        
             {% endif %}
             <hr/>
-            <p style="color:#C0C0C0">{{ song.lyrics|replace('\n', '<br>')|safe }}</p>  <!-- Added replace and safe filters -->
+            <h4><p style="color:#C0C0C0">{{ song.lyrics|replace('\n', '<br>')|safe }}</p>  <!-- Added replace and safe filters --></h4>
             <a href="/songbook" style="font-size: 3vw; padding: 10px; background-color: transparent !important; text-decoration: none;">↩️</a>
     </main>
 </body>
