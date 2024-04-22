@@ -33,7 +33,7 @@ class Song(db.Model):
 
     @property
     def first_three_words(self):
-        return ' '.join(self.lyrics.replace('Refr.', '').split(' ')[:3])
+        return (' '.join(self.lyrics.replace('Refr.', '').replace(':,:', '').split(' ')[:3])).strip()
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)

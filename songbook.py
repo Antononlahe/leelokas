@@ -4,6 +4,10 @@ from .database import db, Song, Author, Genre
 def create_blueprint():
     bp = Blueprint('songbook', __name__)
 
+    @bp.route('/', methods=['GET'])
+    def root():
+        return redirect(url_for('songbook.index'))
+
     @bp.route('/songbook', methods=['GET'])
     def index():
         query = request.args.get('query', '')
@@ -17,6 +21,7 @@ def create_blueprint():
             if search_in_lyrics:
                 redirect_args['search_in_lyrics'] = 'on'
             return redirect(url_for('songbook.index', **redirect_args))
+        # QUERY
         if query == '':
             songs = Song.query.all()
         else:
@@ -27,6 +32,9 @@ def create_blueprint():
                 songs = Song.query.filter(Song.name.contains(query) | Song.lyrics.contains(query)).all()
             else:
                 songs = Song.query.filter(Song.name.contains(query)).all()
+        for song in songs:
+            song.lyrics = song.lyrics.replace('Refr.', '').replace(':,:', '').strip()
+        # SORT
         if sort == 'lyrics':
             songs.sort(key=lambda song: song.lyrics.split(' ')[0].lower())
         else:
@@ -78,22 +86,10 @@ def create_blueprint():
         db.session.commit()
 
         response_content = """
-        Song successfully added.<br>
-        <button onclick="location.href='/songbook/admin';">Back to Admin</button>
+            Song successfully added.<br>
+            <button onclick="location.href='/songbook/admin';">Back to Admin</button>
         """
         return make_response(response_content, 201)
-
-
-    @bp.route('/songbook/search', methods=['GET'])
-    def search_songs():
-        query = request.args.get('query', '')
-        if query == '':
-            songs = Song.query.all()
-        else:
-            songs = Song.query.filter(Song.name.contains(query) | Song.lyrics.contains(query)).all()
-            songs.extend(Author.query.filter(Author.name.contains(query)).all())
-            songs.extend(Genre.query.filter(Genre.name.contains(query)).all())
-        return {'songs': [song.name for song in songs]}
     
     @bp.route('/songbook/<string:song_name>', methods=['GET'])
     def show_song(song_name):
